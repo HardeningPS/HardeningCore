@@ -47,5 +47,28 @@ Describe -Name $describe -Tag 'Function', 'Private', $function -Fixture {
     }
     Test-PesterFunctionCmdletBinding @splat
     #endregion
+
+    #region Return Type
+    Context -Name "Return Type" -Fixture {
+        New-HCoreCache -Name 'MyTestCache' -InputObject ([PSCustomObject]@{ test = "test" })
+        $testCases = @(
+            @{
+                FoundReturnType    = ( Test-HCoreFilterPartOfDomain -ErrorAction 'Stop' ).GetType().FullName
+                ExpectedReturnType = 'System.Boolean'
+            }
+        )
+        $testName = 'should return the expected data type: <ExpectedReturnType>'
+        It -Name $testName -TestCases $testCases -Test {
+            param ( [String] $FoundReturnType, [String] $ExpectedReturnType )
+            $FoundReturnType | Should -Be $ExpectedReturnType
+        }
+
+        $testName = "has an 'OutputType' entry for <FoundReturnType>"
+        It -Name $testName -TestCases $testCases -Test {
+            param ( [String] $FoundReturnType, [String] $ExpectedReturnType )
+            $FoundReturnType | Should -BeIn ( Get-Help -Name $function -Full ).ReturnValues.ReturnValue.Type.Name
+        }
+    }
+    #endregion
 }
 #endregion
