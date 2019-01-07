@@ -3,10 +3,10 @@ Function Test-HCoreAccountPolicy
 
     <#
         .SYNOPSIS
-        This function contains the configuration of the password policy and the account lockout policy.
+        This function allows you to test the configuration of the password policy and account lockout policy.
 
         .DESCRIPTION
-        This function contains the configuration of the password policy and the account lockout policy.
+        This function allows you to test the configuration of the password policy and account lockout policy.
 
         .PARAMETER Type
         This parameter is used to define the target.
