@@ -45,7 +45,6 @@ Function Get-HCoreConfig
     Param(
         [Parameter(
             Mandatory = $true,
-            ParameterSetName = 'Name',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true
@@ -55,8 +54,6 @@ Function Get-HCoreConfig
         $Name,
 
         [Parameter(
-            Mandatory = $false,
-            ParameterSetName = 'Path',
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true
