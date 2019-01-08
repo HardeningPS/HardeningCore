@@ -10,7 +10,7 @@ Function Get-HCoreSecurityPolicyContent
         .INPUTS
         System.String
 
-        .INPUTS.
+        .INPUTS
         System.Management.Automation.PSObject
 
         .OUTPUTS
