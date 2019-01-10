@@ -212,9 +212,9 @@ Function Set-HCoreAccountPolicy
     process
     {
         $splats = @{
-            Type        = $Type
-            Config      = ( Get-HCoreConfig -Name 'AccountPolicy' -Path $ConfigDirectory )
-            Parameter   = $PSBoundParameters
+            Type      = $Type
+            Config    = ( Get-HCoreConfig -Name 'AccountPolicy' -Path $ConfigDirectory )
+            Parameter = $PSBoundParameters
         }
         Set-HCoreSecurityPolicy @splats
     }

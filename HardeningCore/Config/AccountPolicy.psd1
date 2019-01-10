@@ -1,6 +1,6 @@
 @{
     Metadata = @{
-        Guid   = '7c35d566-a1e0-41ca-962a-555b79c41326'
+        Guid = '7c35d566-a1e0-41ca-962a-555b79c41326'
         Name = 'AccountPolicy'
         Area = 'SecurityPolicy'
     }
