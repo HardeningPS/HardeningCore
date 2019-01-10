@@ -36,7 +36,7 @@ Describe -Name $describe -Tag 'Function', 'Private', $function -Fixture {
     Test-PesterFunctionHelpInput -Help $help
 
     $splat = @{
-        ExpectedParameterNames = @( 'Name' )
+        ExpectedParameterNames = @( 'Name', 'Detail' )
         Help                   = $help
     }
     Test-PesterFunctionHelpParameter @splat

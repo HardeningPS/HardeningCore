@@ -112,11 +112,11 @@ Function Get-HCoreSecurityPolicy
             {
                 'Registry Values'
                 {
-                    $value = $securityPolicy.Object.($item.Value.Section).($item.Value.Key).Value
+                    $value = $securityPolicy.($item.Value.Section).($item.Value.Key).Value
                 }
                 Default
                 {
-                    $value = $securityPolicy.Object.($item.Value.Section).($item.Value.Key)
+                    $value = $securityPolicy.($item.Value.Section).($item.Value.Key)
                 }
             }
 

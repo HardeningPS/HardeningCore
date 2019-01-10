@@ -46,7 +46,7 @@ Function Test-HCoreFilterServer
             New-HCoreCache -Name "OperatingSystem" -InputObject $operatingSystem
         }
 
-        if ( $operatingSystem.Object.ProductType -eq 3 )
+        if ( $operatingSystem.ProductType -eq 3 )
         {
             return $true
         }

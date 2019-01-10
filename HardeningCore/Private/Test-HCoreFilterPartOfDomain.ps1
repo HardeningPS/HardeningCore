@@ -43,7 +43,7 @@ Function Test-HCoreFilterPartOfDomain
             New-HCoreCache -Name "ComputerSystem" -InputObject $computerSystem
         }
 
-        if ( $computerSystem.Object.PartOfDomain -eq $true )
+        if ( $computerSystem.PartOfDomain -eq $true )
         {
             return $true
         }

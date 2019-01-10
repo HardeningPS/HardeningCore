@@ -11,6 +11,9 @@ Function Get-HCoreCache
         .PARAMETER Name
         Specifies the name of the cache
 
+        .PARAMETER Detail
+        Retrieve all data content of your object
+
         .EXAMPLE
         PS C:\> Get-HCoreCache -Name 'MyCache'
 
@@ -45,7 +48,11 @@ Function Get-HCoreCache
         )]
         [ValidateNotNullOrEmpty()]
         [System.String]
-        $Name
+        $Name,
+
+        [Parameter( Position = 1 )]
+        [Switch]
+        $Detail
     )
 
     begin
@@ -61,7 +68,14 @@ Function Get-HCoreCache
             if ( (Get-Date) -lt $script:Cache[$Name].ExpirationDateTime )
             {
                 Write-Verbose "[$($MyInvocation.MyCommand.Name)] Cache still valid"
-                return $script:Cache[$Name]
+                if($Detail)
+                {
+                    return $script:Cache[$Name]
+                }
+                else
+                {
+                    return $script:Cache[$Name].Object
+                }
             }
             else
             {

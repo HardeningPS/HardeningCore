@@ -46,7 +46,7 @@ Function Test-HCoreFilterDomainController
             New-HCoreCache -Name "OperatingSystem" -InputObject $operatingSystem
         }
 
-        if ( $operatingSystem.Object.ProductType -eq 2 )
+        if ( $operatingSystem.ProductType -eq 2 )
         {
             return $true
         }
