@@ -89,7 +89,11 @@ Function Set-HCoreAccountPolicy
 
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "")]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingUserNameAndPassWordParams", "")]
-    [CmdletBinding( HelpUri = "https://hardening.netboot.fr/configuration/powershell/public/set-hcoreaccountpolicy/" )]
+    [CmdletBinding(
+        SupportsShouldProcess = $true,
+        ConfirmImpact = 'Low',
+        HelpUri = "https://hardening.netboot.fr/configuration/powershell/public/set-hcoreaccountpolicy/"
+    )]
     [OutputType( [System.Void] )]
     Param(
         [Parameter(
@@ -211,12 +215,15 @@ Function Set-HCoreAccountPolicy
 
     process
     {
-        $splats = @{
-            Type      = $Type
-            Config    = ( Get-HCoreConfig -Name 'AccountPolicy' -Path $ConfigDirectory )
-            Parameter = $PSBoundParameters
+        if ( $PSCmdlet.ShouldProcess( ( $PSBoundParameters | Out-String ) ) )
+        {
+            $splats = @{
+                Type      = $Type
+                Config    = ( Get-HCoreConfig -Name 'AccountPolicy' -Path $ConfigDirectory )
+                Parameter = $PSBoundParameters
+            }
+            Set-HCoreSecurityPolicy @splats
         }
-        Set-HCoreSecurityPolicy @splats
     }
 
     end

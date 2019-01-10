@@ -48,7 +48,9 @@ Describe -Name $describe -Tag 'Function', 'Public', $function -Fixture {
             'Account_Lockout_Threshold',
             'Reset_Account_Lockout_Counter_After',
             'Preset',
-            'ConfigDirectory'
+            'ConfigDirectory',
+            'WhatIf',
+            'Confirm'
         )
         Help                   = $help
     }

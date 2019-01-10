@@ -41,7 +41,11 @@ Function Set-HCoreSecurityPolicyContent
         - Author    : Thomas ILLIET
     #>
 
-    [CmdletBinding()]
+    [CmdletBinding(
+        SupportsShouldProcess = $true,
+        ConfirmImpact = 'Low',
+        HelpUri = "https://hardening.netboot.fr/configuration/powershell/private/set-hcoresecuritypolicycontent/"
+    )]
     [OutputType( [System.Void] )]
     Param(
         [Parameter(
@@ -67,7 +71,6 @@ Function Set-HCoreSecurityPolicyContent
     Begin
     {
         Write-Verbose "[$($MyInvocation.MyCommand.Name)] Function started"
-        $stream = [System.IO.StreamWriter] $Filepath
         $RegistryType = @{
             "REG_SZ"        = 1
             "REG_EXPAND_SZ" = 2
@@ -79,66 +82,71 @@ Function Set-HCoreSecurityPolicyContent
 
     Process
     {
-        Write-Verbose "[$($MyInvocation.MyCommand.Name)] Writing to file: $Filepath"
-        foreach ($section in $InputObject.get_keys())
+        if ( $PSCmdlet.ShouldProcess( $Filepath ) )
         {
-            # writing section
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] Writing Section: [$section]"
-            $stream.WriteLine("[$section]")
 
-            # writing key
-            if ($InputObject[$section].Count)
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] Writing to file: $Filepath"
+            $stream = [System.IO.StreamWriter] $Filepath
+
+            foreach ($section in $InputObject.get_keys())
             {
-                Foreach ($key in $InputObject[$section].get_keys())
+                # writing section
+                Write-Verbose "[$($MyInvocation.MyCommand.Name)] Writing Section: [$section]"
+                $stream.WriteLine("[$section]")
+
+                # writing key
+                if ($InputObject[$section].Count)
                 {
-                    Write-Verbose "[$($MyInvocation.MyCommand.Name)] Writing key: $key"
-                    switch ($section)
+                    Foreach ($key in $InputObject[$section].get_keys())
                     {
-                        'Registry Values'
+                        Write-Verbose "[$($MyInvocation.MyCommand.Name)] Writing key: $key"
+                        switch ($section)
                         {
-                            switch ($InputObject[$section][$key]['Type'])
+                            'Registry Values'
                             {
-                                'REG_SZ'
+                                switch ($InputObject[$section][$key]['Type'])
                                 {
-                                    $registryValue = "`"$InputObject[$section][$key]['value']`""
+                                    'REG_SZ'
+                                    {
+                                        $registryValue = "`"$InputObject[$section][$key]['value']`""
+                                    }
+                                    'REG_MULTI_SZ'
+                                    {
+                                        $registryValue = $InputObject[$section][$key]['value'] -join ','
+                                    }
+                                    Default
+                                    {
+                                        $registryValue = $InputObject[$section][$key]['value']
+                                    }
                                 }
-                                'REG_MULTI_SZ'
+                                $registryTypeId = $RegistryType.Item($InputObject[$section][$key]['Type'])
+                                $stream.WriteLine("$key=$registryTypeId,$registryValue")
+                            }
+                            'System Access'
+                            {
+                                if ($InputObject[$section][$key] -match "^\d+$")
                                 {
-                                    $registryValue = $InputObject[$section][$key]['value'] -join ','
+                                    $stream.WriteLine("$key=$($InputObject[$section][$key])")
                                 }
-                                Default
+                                else
                                 {
-                                    $registryValue = $InputObject[$section][$key]['value']
+                                    $stream.WriteLine("$key=`"$($InputObject[$section][$key])`"")
                                 }
                             }
-                            $registryTypeId = $RegistryType.Item($InputObject[$section][$key]['Type'])
-                            $stream.WriteLine("$key=$registryTypeId,$registryValue")
-                        }
-                        'System Access'
-                        {
-                            if ($InputObject[$section][$key] -match "^\d+$")
+                            Default
                             {
                                 $stream.WriteLine("$key=$($InputObject[$section][$key])")
                             }
-                            else
-                            {
-                                $stream.WriteLine("$key=`"$($InputObject[$section][$key])`"")
-                            }
-                        }
-                        Default
-                        {
-                            $stream.WriteLine("$key=$($InputObject[$section][$key])")
                         }
                     }
                 }
             }
+            $stream.close()
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] Finished Writing to file: $FilePath"
         }
-        Write-Verbose "[$($MyInvocation.MyCommand.Name)] Finished Writing to file: $FilePath"
     }
-
     End
     {
-        $stream.close()
         Write-Verbose "[$($MyInvocation.MyCommand.Name)] Function ended"
     }
 }
