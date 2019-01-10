@@ -48,6 +48,53 @@ Describe -Name $describe -Tag 'Function', 'Private', $function -Fixture {
     Test-PesterFunctionCmdletBinding @splat
     #endregion
 
+    #region Execution
+    Context -Name 'Execution' -Fixture {
+        InModuleScope -ModuleName $BUILD_CONFIG['MODULE_NAME'] -ScriptBlock {
+
+            Mock -CommandName Get-HCoreCache -Verifiable -MockWith {}
+            Mock -CommandName Get-CimInstance -Verifiable -MockWith { @{ PartOfDomain = $true } }
+            $testName = 'should be return $true if the computer is part of a domain (without cache)'
+            It -Name $testName -TestCases $testCases -Test {
+                Test-HCoreFilterPartOfDomain | Should -Be $true
+                Test-HCoreFilterPartOfDomain | Should -BeOfType System.Boolean
+            }
+            Assert-VerifiableMock
+            Assert-MockCalled -CommandName Get-HCoreCache -Times 1
+            Assert-MockCalled -CommandName Get-CimInstance -Times 1
+
+            Mock -CommandName Get-HCoreCache -Verifiable -MockWith {}
+            Mock -CommandName Get-CimInstance -Verifiable -MockWith { @{ PartOfDomain = $false } }
+            $testName = 'should be return $false if the computer is not part of a domain (without cache)'
+            It -Name $testName -TestCases $testCases -Test {
+                Test-HCoreFilterPartOfDomain | Should -Be $false
+                Test-HCoreFilterPartOfDomain | Should -BeOfType System.Boolean
+            }
+            Assert-VerifiableMock
+            Assert-MockCalled -CommandName Get-HCoreCache -Times 1
+            Assert-MockCalled -CommandName Get-CimInstance -Times 1
+
+            Mock -CommandName Get-HCoreCache -Verifiable -MockWith { @{ PartOfDomain = $true } }
+            $testName = 'should be return $true if the computer is part of a domain (with cache)'
+            It -Name $testName -TestCases $testCases -Test {
+                Test-HCoreFilterPartOfDomain | Should -Be $true
+                Test-HCoreFilterPartOfDomain | Should -BeOfType System.Boolean
+            }
+            Assert-VerifiableMock
+            Assert-MockCalled -CommandName Get-HCoreCache -Times 1
+
+            Mock -CommandName Get-HCoreCache -Verifiable -MockWith { @{ PartOfDomain = $false } }
+            $testName = 'should be return $false if the computer is not part of a domain (with cache)'
+            It -Name $testName -TestCases $testCases -Test {
+                Test-HCoreFilterPartOfDomain | Should -Be $false
+                Test-HCoreFilterPartOfDomain | Should -BeOfType System.Boolean
+            }
+            Assert-VerifiableMock
+            Assert-MockCalled -CommandName Get-HCoreCache -Times 1
+        }
+    }
+    #endregion
+
     #region Return Type
     Context -Name "Return Type" -Fixture {
         New-HCoreCache -Name 'MyTestCache' -InputObject ([PSCustomObject]@{ test = "test" })
