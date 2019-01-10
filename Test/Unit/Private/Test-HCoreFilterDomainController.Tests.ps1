@@ -48,6 +48,53 @@ Describe -Name $describe -Tag 'Function', 'Private', $function -Fixture {
     Test-PesterFunctionCmdletBinding @splat
     #endregion
 
+    #region Execution
+    Context -Name 'Execution' -Fixture {
+        InModuleScope -ModuleName $BUILD_CONFIG['MODULE_NAME'] -ScriptBlock {
+
+            Mock -CommandName Get-HCoreCache -Verifiable -MockWith {}
+            Mock -CommandName Get-CimInstance -Verifiable -MockWith { @{ ProductType = 2 } }
+            $testName = 'should be return $true if the computer is a Domain Controller (without cache)'
+            It -Name $testName -TestCases $testCases -Test {
+                Test-HCoreFilterDomainController | Should -Be $true
+                Test-HCoreFilterDomainController | Should -BeOfType System.Boolean
+            }
+            Assert-VerifiableMock
+            Assert-MockCalled -CommandName Get-HCoreCache -Times 1
+            Assert-MockCalled -CommandName Get-CimInstance -Times 1
+
+            Mock -CommandName Get-HCoreCache -Verifiable -MockWith {}
+            Mock -CommandName Get-CimInstance -Verifiable -MockWith { @{ ProductType = 1 } }
+            $testName = 'should be return $false if the computer is not a Domain Controller (without cache)'
+            It -Name $testName -TestCases $testCases -Test {
+                Test-HCoreFilterDomainController | Should -Be $false
+                Test-HCoreFilterDomainController | Should -BeOfType System.Boolean
+            }
+            Assert-VerifiableMock
+            Assert-MockCalled -CommandName Get-HCoreCache -Times 1
+            Assert-MockCalled -CommandName Get-CimInstance -Times 1
+
+            Mock -CommandName Get-HCoreCache -Verifiable -MockWith { @{ ProductType = 2 } }
+            $testName = 'should be return $true if the computer is a Domain Controller (with cache)'
+            It -Name $testName -TestCases $testCases -Test {
+                Test-HCoreFilterDomainController | Should -Be $true
+                Test-HCoreFilterDomainController | Should -BeOfType System.Boolean
+            }
+            Assert-VerifiableMock
+            Assert-MockCalled -CommandName Get-HCoreCache -Times 1
+
+            Mock -CommandName Get-HCoreCache -Verifiable -MockWith { @{ ProductType = 1 } }
+            $testName = 'should be return $false if the computer is not a Domain Controller (with cache)'
+            It -Name $testName -TestCases $testCases -Test {
+                Test-HCoreFilterDomainController | Should -Be $false
+                Test-HCoreFilterDomainController | Should -BeOfType System.Boolean
+            }
+            Assert-VerifiableMock
+            Assert-MockCalled -CommandName Get-HCoreCache -Times 1
+        }
+    }
+    #endregion
+
     #region Return Type
     Context -Name "Return Type" -Fixture {
         New-HCoreCache -Name 'MyTestCache' -InputObject ([PSCustomObject]@{ test = "test" })
