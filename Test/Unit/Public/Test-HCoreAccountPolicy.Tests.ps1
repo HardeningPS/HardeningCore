@@ -9,6 +9,7 @@ Describe -Name $describe -Tag 'Function', 'Public', $function -Fixture {
 
     #region Block Comments
     $help = Get-Help -Name $function -Full
+    $config = Import-PowerShellDataFile -Path ( Join-Path -Path $BUILD_CONFIG['MODULE_DST_PATH'] -ChildPath 'Config\AccountPolicy.psd1' )
 
     $splat = @{
         ExpectedFunctionName = $function
@@ -35,21 +36,12 @@ Describe -Name $describe -Tag 'Function', 'Public', $function -Fixture {
 
     Test-PesterFunctionHelpInput -Help $help
 
+    [System.Collections.ArrayList]$expectedParameterNames = $Config.Data.GetEnumerator().Name
+    $expectedParameterNames.Add('Type')
+    $expectedParameterNames.Add('Preset')
+    $expectedParameterNames.Add('ConfigDirectory')
     $splat = @{
-        ExpectedParameterNames = @(
-            'Type',
-            'Enforce_password_history',
-            'Maximum_password_age',
-            'Minimum_password_age',
-            'Minimum_password_length',
-            'Password_must_meet_complexity_requirements',
-            'Store_passwords_using_reversible_encryption',
-            'Account_Lockout_Duration',
-            'Account_Lockout_Threshold',
-            'Reset_Account_Lockout_Counter_After',
-            'Preset',
-            'ConfigDirectory'
-        )
+        ExpectedParameterNames = $ExpectedParameterNames
         Help                   = $help
     }
     Test-PesterFunctionHelpParameter @splat
