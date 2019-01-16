@@ -43,6 +43,26 @@ Function Test-HCoreAccountPolicy
         .PARAMETER Reset_Account_Lockout_Counter_After
         This parameter determines the length of time before the Account lockout threshold resets to zero.
 
+        .PARAMETER Maximum_Lifetime_For_User_Ticket_Renewal
+        This parameter determines the period of time (in days) during which a user's ticket-granting ticket (TGT) may be renewed.
+        By default, this setting is set to 7 days in the Default Domain Group Policy object (GPO).
+
+        .PARAMETER Enforce_User_Logon_Restrictions
+        This parameter determines whether the Kerberos Key Distribution Center (KDC) validates every request for a session ticket against the user rights policy of the target computer.
+        The policy is enabled by default which is the most secure setting for validating access to target resources are not circumvented.
+
+        .PARAMETER Maximum_Lifetime_For_Service_Ticket
+        This parameter determines the maximum amount of time (in minutes) that a granted session ticket can be used to access a particular service.
+        The setting must be greater than ten minutes and less than or equal to the setting for Maximum lifetime for user ticket.
+        By default, this value is set to 600 minutes (10 hours) in the Default Domain Group Policy object (GPO).
+
+        .PARAMETER Maximum_Tolerance_For_Computer_Clock_Synchronization
+        This parameter determines the maximum time difference (in minutes) that Kerberos will tolerate between the time on a client's clock and the time on a server's clock while still considering the two clocks synchronous.
+
+        .PARAMETER Maximum_Lifetime_For_User_Ticket
+        This parameter determines the maximum amount of time (in hours) that a user's ticket-granting ticket (TGT) may be used. When a user's TGT expires, a new one must be requested or the existing one must be "renewed."
+        By default, this setting is set to 10 hours in the Default Domain Group Policy object (GPO).
+
         .PARAMETER Preset
         This setting allows you to use the predefined configuration stored in the AccountPolicy configuration.
 
@@ -163,7 +183,7 @@ Function Test-HCoreAccountPolicy
             ValueFromPipelineByPropertyName = $true,
             ParameterSetName = 'Manual'
         )]
-        [System.Boolean]
+        [System.Int32]
         $Account_Lockout_Duration,
 
         [Parameter(
@@ -172,7 +192,7 @@ Function Test-HCoreAccountPolicy
             ValueFromPipelineByPropertyName = $true,
             ParameterSetName = 'Manual'
         )]
-        [System.Boolean]
+        [System.Int32]
         $Account_Lockout_Threshold,
 
         [Parameter(
@@ -181,11 +201,56 @@ Function Test-HCoreAccountPolicy
             ValueFromPipelineByPropertyName = $true,
             ParameterSetName = 'Manual'
         )]
-        [System.Boolean]
+        [System.Int32]
         $Reset_Account_Lockout_Counter_After,
 
         [Parameter(
+            Position = 9,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            ParameterSetName = 'Manual'
+        )]
+        [System.Boolean]
+        $Enforce_user_logon_restrictions,
+
+        [Parameter(
             Position = 10,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            ParameterSetName = 'Manual'
+        )]
+        [System.Int32]
+        $Maximum_lifetime_for_service_ticket,
+
+        [Parameter(
+            Position = 11,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            ParameterSetName = 'Manual'
+        )]
+        [System.Int32]
+        $Maximum_lifetime_for_user_ticket,
+
+        [Parameter(
+            Position = 12,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            ParameterSetName = 'Manual'
+        )]
+        [System.Int32]
+        $Maximum_lifetime_for_user_ticket_renewal,
+
+        [Parameter(
+            Position = 13,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            ParameterSetName = 'Manual'
+        )]
+        [System.Int32]
+        $Maximum_tolerance_for_computer_clock_synchronization,
+
+        [Parameter(
+            Position = 14,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
             ParameterSetName = 'Preset'
@@ -195,7 +260,7 @@ Function Test-HCoreAccountPolicy
         $Preset,
 
         [Parameter(
-            Position = 11,
+            Position = 15,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true
         )]
